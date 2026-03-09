@@ -42,7 +42,7 @@
 - Step 1. Download or Clone the repository
 - Step 2. Unzip the file if you have downloaded it
 - Step 3. Open in Visual Studio Code (VSC)
-- Step 4)  
+- Step 4). Ejecutar el archivo booking.sql, para crear las base de datos con toda la informacion.
 ![](https://github.com/user-attachments/assets/7bdf82b2-8db8-43b1-85b6-b09768a59cd3)
 - Step 5. Open docker
 - Step 6. In the vsc terminal run: docker-compose up --build
