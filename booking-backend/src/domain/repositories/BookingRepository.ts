@@ -1,0 +1,20 @@
+import { Booking } from "../entities/Booking";
+import { BookingStatus } from "../../shared/booking-status";
+
+export interface BookingRepository {
+  countBookings(providerId: number, date: string): Promise<number>;
+
+  create(data: Partial<Booking>): Promise<number>;
+
+  findById(id: number): Promise<Booking | null>;
+
+  updateDate(id: number, newDate: string, version: number): Promise<boolean>;
+
+  updateStatus(
+    bookingId: number,
+    status: BookingStatus,
+    version: number,
+  ): Promise<boolean>;
+
+  list(): Promise<Booking[]>;
+}

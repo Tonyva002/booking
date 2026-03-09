@@ -1,0 +1,41 @@
+{
+  "name": "booking-backend",
+  "version": "1.0.0",
+  "description": "Reservar citas por día",
+  "keywords": [
+    "node",
+    "express",
+    "booking",
+    "api",
+    "rest",
+    "backend"
+  ],
+  "license": "ISC",
+  "author": "Tony Vasquez",
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "start:docker": "npm run build && node dist/index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dayjs": "^1.11.19",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "mysql2": "^3.18.2",
+    "uuid": "^13.0.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "nodemon": "^3.1.14",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.9.3"
+  }
+}

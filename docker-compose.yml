@@ -1,0 +1,52 @@
+version: "3.9"
+
+volumes:
+  mysql_data:
+
+services:
+  # ---------------- MYSQL ----------------
+  mysql:
+    image: mysql:8
+    container_name: booking-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: booking
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-ppassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ---------------- BACKEND ----------------
+  backend:
+    build:
+      context: ./booking-backend
+      dockerfile: Dockerfile.dev
+    container_name: booking-backend
+    ports:
+      - "4000:4000"
+    env_file:
+      - ./booking-backend/.env
+    volumes:
+      - ./booking-backend:/app
+      - /app/node_modules
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  # ---------------- FRONTEND (DESARROLLO) ----------------
+  frontend:
+    container_name: booking-frontend
+    build:
+      context: ./booking-frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./booking-frontend:/app
+      - /app/node_modules
+    command: npm run dev
+    depends_on:
+      - backend
