@@ -9,12 +9,5 @@ export interface Booking {
   booking_date: string;
   status: typeof BOOKING_STATUS[keyof typeof BOOKING_STATUS];
   version: number;
-  /*id: number;
-  providerId: number;
-  clientId: number;
-  providerName: string;
-  clientName: string;
-  bookingDate: string;
-  status: typeof BOOKING_STATUS[keyof typeof BOOKING_STATUS];
-  version: number*/
+  
 }

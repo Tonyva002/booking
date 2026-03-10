@@ -8,7 +8,11 @@ export interface BookingRepository {
 
   findById(id: number): Promise<Booking | null>;
 
-  updateDate(id: number, newDate: string, version: number): Promise<boolean>;
+  rescheduleBooking(
+    id: number,
+    newDate: string,
+    version: number,
+  ): Promise<boolean>;
 
   updateStatus(
     bookingId: number,

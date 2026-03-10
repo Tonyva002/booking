@@ -45,7 +45,7 @@ export const ProviderAvailabilityPage: React.FC = () => {
         </h1>
         
         <div className="flex flex-wrap gap-4 items-end">
-          <div className="flex flex-col gap-1.5 flex-1 min-w-[200px]">
+          <div className="flex flex-col gap-1.5 flex-1 min-w-50">
             <label className="text-xs font-bold text-gray-500 uppercase ml-1">Select Provider</label>
             <select
               className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 transition-all outline-none"
@@ -59,7 +59,7 @@ export const ProviderAvailabilityPage: React.FC = () => {
             </select>
           </div>
 
-          <div className="flex flex-col gap-1.5 flex-1 min-w-[200px]">
+          <div className="flex flex-col gap-1.5 flex-1 min-w-50">
             <label className="text-xs font-bold text-gray-500 uppercase ml-1">Search Date</label>
             <input
               type="date"
@@ -72,7 +72,7 @@ export const ProviderAvailabilityPage: React.FC = () => {
           <button 
             onClick={loadAvailability}
             disabled={!selectedProvider || !date}
-            className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold py-2.5 px-6 rounded-lg shadow-md transition-all active:scale-95 h-[42px]"
+            className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold py-2.5 px-6 rounded-lg shadow-md transition-all active:scale-95 h-10.5"
           >
             Check Availability
           </button>

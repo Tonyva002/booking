@@ -9,7 +9,7 @@ export class AuditRepositoryImpl implements AuditRepository {
     bookingId: number,
     action: AuditActions,
     oldValue: Record<string, unknown> | null,
-    newValue: Record<string, unknown> | null
+    newValue: Record<string, unknown> | null,
   ): Promise<void> {
     return this.dataSource.log(bookingId, action, oldValue, newValue);
   }

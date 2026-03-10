@@ -1,6 +1,5 @@
 import type { BookingRepository } from "../../domain/repositories/BookingRepository";
 import type { Booking } from "../../domain/entities/Booking";
-import type { Availability } from "../../domain/entities/Availability";
 import BookingApiDataSource from "../datasources/BookingApiDataSource";
 
 export class BookingRepositoryImpl implements BookingRepository {
@@ -22,18 +21,10 @@ export class BookingRepositoryImpl implements BookingRepository {
     return this.dataSource.rescheduleBooking(id, date);
   }
 
-  getAvailability(
-    providerId: number,
-    start: string,
-    end: string
-  ): Promise<Availability[]> {
-    return this.dataSource.getAvailability(providerId, start, end);
-  }
-
   createBooking(
     providerId: number,
     clientId: number,
-    date: string
+    date: string,
   ): Promise<Booking> {
     return this.dataSource.createBooking(providerId, clientId, date);
   }

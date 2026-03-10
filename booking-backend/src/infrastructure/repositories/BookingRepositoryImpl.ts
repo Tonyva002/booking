@@ -79,7 +79,7 @@ export class MysqlBookingRepository implements BookingRepository {
 
   // Actualiza la fecha de una reserva.
   // Usa control de versiones optimista (solo actualiza si la versión coincide).
-  async updateDate(
+  async rescheduleBooking(
     id: number,
     newDate: string,
     version: number,

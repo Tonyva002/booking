@@ -1,6 +1,5 @@
 import { api } from "../../core/api/axios";
 import type { Booking } from "../../domain/entities/Booking";
-import type { Availability } from "../../domain/entities/Availability";
 import axios from "axios";
 
 export default class BookingApiDataSource {
@@ -19,21 +18,37 @@ export default class BookingApiDataSource {
     await api.post(`/bookings/${id}/cancel`);
   }
 
-  async rescheduleBooking(id: number, date: string): Promise<void> {
+  /*async rescheduleBooking(id: number, date: string): Promise<void> {
+    console.log("reschedule", id, date)
     await api.post(`/bookings/${id}/reschedule`, { newDate: date });
-  }
+    
+  }*/
 
-  async getAvailability(
-    providerId: number,
-    start: string,
-    end: string
-  ): Promise<Availability[]> {
-    const { data } = await api.get<Availability[]>(
-      `/providers/${providerId}/availability`,
-      { params: { from: start, to: end } }
-    );
-    return data;
+    async rescheduleBooking(id: number, date: string): Promise<void> {
+  try {
+
+    console.log("reschedule", id, date);
+
+    await api.post(`/bookings/${id}/reschedule`, {
+      newDate: date,
+    });
+
+  } catch (error: unknown) {
+
+    if (axios.isAxiosError(error)) {
+
+      const message =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        "Error al reprogramar la reserva";
+
+      throw new Error(message);
+    }
+
+    throw new Error("Error desconocido");
   }
+}
+
 
   async createBooking(
     providerId: number,
