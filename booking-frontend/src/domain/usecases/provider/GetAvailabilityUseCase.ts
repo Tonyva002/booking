@@ -4,7 +4,7 @@ import type { ProviderRepository } from "../../repositories/ProviderRepository";
 export class GetAvailabilityUseCase {
   constructor(private providerRepo: ProviderRepository) {}
 
-  execute(providerId: number, date: string): Promise<Availability> {
+  execute(providerId: number, date: string, ): Promise<Availability> {
     return this.providerRepo.getAvailability(providerId, date);
   }
 }

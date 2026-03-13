@@ -3,10 +3,9 @@ import type { Booking } from "../../domain/entities/Booking";
 import axios from "axios";
 
 export default class BookingApiDataSource {
-
   async getBookings(): Promise<Booking[]> {
     const { data } = await api.get<Booking[]>("/bookings");
-    console.log("Booking information", data)
+    console.log("Booking information", data);
     return data;
   }
 
@@ -18,42 +17,29 @@ export default class BookingApiDataSource {
     await api.post(`/bookings/${id}/cancel`);
   }
 
-  /*async rescheduleBooking(id: number, date: string): Promise<void> {
-    console.log("reschedule", id, date)
-    await api.post(`/bookings/${id}/reschedule`, { newDate: date });
-    
-  }*/
+  async rescheduleBooking(id: number, date: string): Promise<void> {
+    try {
+      await api.post(`/bookings/${id}/reschedule`, {
+        newDate: date,
+      });
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        const message =
+          error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Error al reprogramar la reserva";
 
-    async rescheduleBooking(id: number, date: string): Promise<void> {
-  try {
+        throw new Error(message);
+      }
 
-    console.log("reschedule", id, date);
-
-    await api.post(`/bookings/${id}/reschedule`, {
-      newDate: date,
-    });
-
-  } catch (error: unknown) {
-
-    if (axios.isAxiosError(error)) {
-
-      const message =
-        error.response?.data?.message ||
-        error.response?.data?.error ||
-        "Error al reprogramar la reserva";
-
-      throw new Error(message);
+      throw new Error("Error desconocido");
     }
-
-    throw new Error("Error desconocido");
   }
-}
-
 
   async createBooking(
     providerId: number,
     clientId: number,
-    date: string
+    date: string,
   ): Promise<Booking> {
     try {
       const { data } = await api.post<Booking>("/bookings", {
@@ -63,9 +49,7 @@ export default class BookingApiDataSource {
       });
 
       return data;
-
     } catch (error: unknown) {
-
       if (axios.isAxiosError(error)) {
         const message =
           error.response?.data?.message ||
@@ -78,5 +62,4 @@ export default class BookingApiDataSource {
       throw new Error("Error desconocido");
     }
   }
-
 }

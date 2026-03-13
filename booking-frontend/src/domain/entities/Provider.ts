@@ -1,5 +1,5 @@
 export interface Provider {
   id: number
   name: string
-  maxBookingsPerDay: number;
+  max_bookings_per_day: number;
 }
