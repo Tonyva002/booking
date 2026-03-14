@@ -63,3 +63,10 @@ export const repositories = {
   providerRepository,
   auditRepository,
 };
+
+export const bookingUseCase = {
+  getBookings: getBookingsUseCase,
+  confirmBooking: confirmBookingUseCase,
+  cancelBooking: cancelBookingUseCase,
+  rescheduleBooking: rescheduleBookingUseCase,
+};
