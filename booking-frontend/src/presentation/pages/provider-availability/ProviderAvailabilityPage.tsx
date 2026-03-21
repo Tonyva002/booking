@@ -4,7 +4,7 @@ import {
   useProviderAvailabilityViewModel,
   type AvailabilityListItemViewModel,
   type ProviderListItemViewModel,
-} from "./useProvideAvailabilityrViewModel";
+} from "./useProviderAvailabilityrViewModel";
 
 export const ProviderAvailabilityPage: React.FC = () => {
   const {

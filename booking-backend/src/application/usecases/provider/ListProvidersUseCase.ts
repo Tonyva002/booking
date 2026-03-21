@@ -16,6 +16,7 @@ export class ListProvidersUseCase {
       return providers;
 
     } catch (error) {
+      console.error("Error real al recuperar proveedores:", error);
       throw new Error("Error al recuperar proveedores");
 
     }
