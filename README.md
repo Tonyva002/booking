@@ -42,14 +42,18 @@
 ### Steps to execute:
 
 - Step 1. Download or Clone the repository
+  
 - Step 2. Unzip the file if you have downloaded it
+  
 - Step 3. Open in Visual Studio Code (VSC)
+  
 - Step 4. En la terminal ejecuta:
   
 ```bash
 copy booking-backend\.env.example booking-backend\.env
 ```
 - Step 5. Open docker
+  
 - Step 6. In the VSC terminal run:
 
 ```bash
