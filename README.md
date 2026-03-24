@@ -44,10 +44,22 @@
 - Step 1. Download or Clone the repository
 - Step 2. Unzip the file if you have downloaded it
 - Step 3. Open in Visual Studio Code (VSC)
-- Step 4. En la terminal ejecuta:    (copy booking-backend\.env.example booking-backend\.env)
+- Step 4. En la terminal ejecuta:
+  
+```bash
+copy booking-backend\.env.example booking-backend\.env
+```
 - Step 5. Open docker
-- Step 6. In the vsc terminal run: docker-compose up --build
-- Step 7. In the browser:   http://localhost:5173
+- Step 6. In the VSC terminal run:
+
+```bash
+docker compose up --build
+```
+- Step 7. In the browser:
+
+```bash
+http://localhost:5173
+```
 
 ## Screenshots
 
