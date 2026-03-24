@@ -24,12 +24,13 @@
 - Node js
 - Express
 - React js
+- vite
 - Axios
 - Tailwindcss
 - Docker
 - MVVM
 - Clean Architecture
-- jest
+- vitest
 - testing-library
   
 
