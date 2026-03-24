@@ -1,11 +1,9 @@
 import { Provider } from "../../domain/entities/Provider";
 import { ProviderRepository } from "../../domain/repositories/ProviderRepository";
-import { pool } from "../database/connection";
+import { pool } from "../database/mysql";
 import { RowDataPacket } from "mysql2";
 
-
 export class MysqlProviderRepository implements ProviderRepository {
-
   // Obtiene la cantidad máxima de reservas por día para un proveedor.
   async getMaxBookingsPerDay(providerId: number): Promise<number> {
     const [rows] = await pool.query<RowDataPacket[]>(
@@ -46,15 +44,10 @@ export class MysqlProviderRepository implements ProviderRepository {
     return rows.length > 0;
   }
 
-
   // Listar los proveedores
   async list(): Promise<Provider[]> {
+    const [rows] = await pool.query(`SELECT * FROM providers ORDER BY name`);
 
-  const [rows] = await pool.query(
-    `SELECT * FROM providers ORDER BY name`
-  );
-
-  return rows as Provider[];
-
-}
+    return rows as Provider[];
+  }
 }

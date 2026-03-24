@@ -1,8 +1,7 @@
 import { ResultSetHeader } from "mysql2";
 import { AuditRepository } from "../../domain/repositories/AuditRepository";
 import { AuditActions } from "../../shared/audit-actions";
-import { pool } from "../database/connection";
-
+import { pool } from "../database/mysql";
 
 export class MysqlAuditRepository implements AuditRepository {
   /**

@@ -1,5 +1,5 @@
 import { BookingRepository } from "../../domain/repositories/BookingRepository";
-import { pool } from "../database/connection";
+import { pool } from "../database/mysql";
 import { Booking } from "../../domain/entities/Booking";
 import { ResultSetHeader, RowDataPacket } from "mysql2";
 import { BookingStatus } from "../../shared/booking-status";
