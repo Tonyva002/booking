@@ -45,7 +45,7 @@
   
 - Step 2. Unzip the file if you have downloaded it
   
-- Step 3. Install mysql workbench: [here](https://dev.mysql.com/downloads/workbench/)
+- Step 3. Install MySQL Workbench: [Download here](https://dev.mysql.com/downloads/workbench/)
   
 - Step 4. Open in Visual Studio Code (VSC)
   
