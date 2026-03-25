@@ -42,14 +42,30 @@
 ### Steps to execute:
 
 - Step 1. Download or Clone the repository
+  
 - Step 2. Unzip the file if you have downloaded it
-- Step 3. Open in Visual Studio Code (VSC)
-- Step 4). Ejecutar en mysql el archivo booking.sql, para crear las base de datos con toda la informacion.
-![](https://github.com/user-attachments/assets/7bdf82b2-8db8-43b1-85b6-b09768a59cd3)
-- Step 5. En la terminal ejecuta:    copy booking-backend\.env.example booking-backend\.env
+  
+- Step 3. Install MySQL Workbench: [Download here](https://dev.mysql.com/downloads/workbench/)
+  
+- Step 4. Open in Visual Studio Code (VSC)
+  
+- Step 5. En la terminal ejecuta:
+  
+```bash
+copy booking-backend\.env.example booking-backend\.env
+```
 - Step 6. Open docker
-- Step 7. In the vsc terminal run: docker-compose up --build
-- Step 8. In the browser:   http://localhost:5173
+  
+- Step 7. In the VSC terminal run:
+
+```bash
+docker compose up --build
+```
+- Step 8. In the browser:
+
+```bash
+http://localhost:5173
+```
 
 ## Screenshots
 
