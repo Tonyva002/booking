@@ -19,6 +19,11 @@ export const ProviderAvailabilityPage: React.FC = () => {
   const [selectedProvider, setSelectedProvider] = useState<number | null>(null);
   const [date, setDate] = useState("");
 
+  const [isBookingDialogOpen, setIsBookingDialogOpen] = useState(false);
+  const [selectedBookingDate, setSelectedBookingDate] = useState("");
+  const [bookingError, setBookingError] = useState("");
+  const [isBookingSubmitting, setIsBookingSubmitting] = useState(false);
+
   useEffect(() => {
     fetchProviders();
   }, [fetchProviders]);
@@ -28,18 +33,40 @@ export const ProviderAvailabilityPage: React.FC = () => {
     await fetchAvailability(selectedProvider, date);
   };
 
-  const handleBook = async (bookingDate: string) => {
-    if (!selectedProvider) return;
+  const openBookingDialog = (bookingDate: string) => {
+    setSelectedBookingDate(bookingDate);
+    setBookingError("");
+    setIsBookingSubmitting(false);
+    setIsBookingDialogOpen(true);
+  };
 
-    const result = await book(selectedProvider, 1, bookingDate);
+  const closeBookingDialog = () => {
+    setIsBookingDialogOpen(false);
+    setSelectedBookingDate("");
+    setBookingError("");
+    setIsBookingSubmitting(false);
+  };
+
+  const handleConfirmBooking = async () => {
+    if (!selectedProvider || !selectedBookingDate) return;
+
+    setIsBookingSubmitting(true);
+    setBookingError("");
+
+    const result = await book(selectedProvider, 1, selectedBookingDate);
 
     if (!result.success) {
-      alert(result.message);
+      setBookingError(result.message ?? "Unable to complete booking.");
+      setIsBookingSubmitting(false);
       return;
     }
 
-    await fetchAvailability(selectedProvider, bookingDate);
+    await fetchAvailability(selectedProvider, date || selectedBookingDate);
+    closeBookingDialog();
   };
+
+  const selectedProviderName =
+    providers.find((p) => p.id === selectedProvider)?.name ?? "Selected provider";
 
   return (
     <div className="space-y-8">
@@ -61,7 +88,7 @@ export const ProviderAvailabilityPage: React.FC = () => {
               value={selectedProvider ?? ""}
               onChange={(e) =>
                 setSelectedProvider(
-                  e.target.value ? Number(e.target.value) : null,
+                  e.target.value ? Number(e.target.value) : null
                 )
               }
             >
@@ -90,6 +117,7 @@ export const ProviderAvailabilityPage: React.FC = () => {
               type="date"
               className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 transition-all outline-none"
               value={date}
+              min={new Date().toISOString().split("T")[0]}
               onChange={(e) => setDate(e.target.value)}
             />
           </div>
@@ -180,7 +208,7 @@ export const ProviderAvailabilityPage: React.FC = () => {
                   <td className="px-6 py-4 text-right">
                     {a.available ? (
                       <button
-                        onClick={() => handleBook(a.date)}
+                        onClick={() => openBookingDialog(a.date)}
                         className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded shadow hover:shadow-lg transition-all"
                       >
                         Book Now
@@ -200,6 +228,68 @@ export const ProviderAvailabilityPage: React.FC = () => {
           </tbody>
         </table>
       </div>
+
+      {/* BOOKING MODAL */}
+      {isBookingDialogOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
+          <div className="w-full max-w-md rounded-2xl bg-white shadow-2xl border border-gray-200 overflow-hidden">
+            <div className="px-6 py-5 border-b border-gray-100">
+              <h2 className="text-lg font-semibold text-gray-900">
+                Confirm Booking
+              </h2>
+              <p className="text-sm text-gray-500 mt-1">
+                Review the booking details before continuing.
+              </p>
+            </div>
+
+            <div className="px-6 py-5 space-y-4">
+              <div className="rounded-xl border border-gray-200 bg-gray-50 p-4 space-y-2">
+                <div>
+                  <p className="text-xs uppercase tracking-wider text-gray-500 font-semibold">
+                    Provider
+                  </p>
+                  <p className="text-sm font-medium text-gray-900">
+                    {selectedProviderName}
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-xs uppercase tracking-wider text-gray-500 font-semibold">
+                    Booking date
+                  </p>
+                  <p className="text-sm font-medium text-gray-900">
+                    {selectedBookingDate}
+                  </p>
+                </div>
+              </div>
+
+              {bookingError && (
+                <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                  {bookingError}
+                </div>
+              )}
+            </div>
+
+            <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-3">
+              <button
+                onClick={closeBookingDialog}
+                disabled={isBookingSubmitting}
+                className="px-4 py-2 text-sm rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-100 transition disabled:opacity-50"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={handleConfirmBooking}
+                disabled={isBookingSubmitting}
+                className="px-4 py-2 text-sm rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 transition shadow-sm disabled:opacity-50"
+              >
+                {isBookingSubmitting ? "Booking..." : "Confirm Booking"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
