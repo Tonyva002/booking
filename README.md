@@ -51,14 +51,14 @@
   
 - Step 5. Open in Visual Studio Code (VSC)
   
-- Step 6. En la terminal ejecuta:
+- Step 6. In the Visual Studio Code terminal, run:
   
 ```bash
 copy booking-backend\.env.example booking-backend\.env
 ```
 - Step 7. Open docker
   
-- Step 8. In the VSC terminal run:
+- Step 8. In the Visual Studio Code terminal, run:
 
 ```bash
 docker compose up --build
