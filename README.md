@@ -45,25 +45,21 @@
   
 - Step 2. Unzip the file if you have downloaded it
   
-- Step 3. Install MySQL Workbench: [Download here](https://dev.mysql.com/downloads/workbench/)
-
-- Step 4. After installing MySQL, create a new connection using port 3307
+- Step 3. Open in Visual Studio Code (VSC)
   
-- Step 5. Open in Visual Studio Code (VSC)
-  
-- Step 6. In the Visual Studio Code terminal, run:
+- Step 4. In the Visual Studio Code terminal, run:
   
 ```bash
 copy booking-backend\.env.example booking-backend\.env
 ```
-- Step 7. Open docker
+- Step 5. Open docker
   
-- Step 8. In the Visual Studio Code terminal, run:
+- Step 6. In the Visual Studio Code terminal, run:
 
 ```bash
 docker compose up --build
 ```
-- Step 9. In the browser:
+- Step 7. In the browser:
 
 ```bash
 http://localhost:5173
