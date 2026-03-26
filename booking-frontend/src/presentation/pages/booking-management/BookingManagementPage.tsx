@@ -19,24 +19,29 @@ export const BookingManagementPage: React.FC = () => {
   const [rescheduleError, setRescheduleError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Fetch bookings on component mount
   useEffect(() => {
     fetchBookings();
   }, [fetchBookings]);
 
+  // Refresh data after any action
   const refreshData = async () => {
     await fetchBookings();
   };
 
+  // Handle confirm action
   const handleConfirm = async (id: number) => {
     await confirmBooking(id);
     await refreshData();
   };
 
+  // Handle cancel action
   const handleCancel = async (id: number) => {
     await cancelBooking(id);
     await refreshData();
   };
 
+  // Open reschedule dialog and reset state
   const openRescheduleDialog = (id: number) => {
     setSelectedBookingId(id);
     setNewDate("");
@@ -44,6 +49,7 @@ export const BookingManagementPage: React.FC = () => {
     setIsRescheduleOpen(true);
   };
 
+  // Close reschedule dialog and reset state
   const closeRescheduleDialog = () => {
     setIsRescheduleOpen(false);
     setSelectedBookingId(null);
@@ -52,6 +58,7 @@ export const BookingManagementPage: React.FC = () => {
     setIsSubmitting(false);
   };
 
+  // Handle reschedule submission
   const handleSubmitReschedule = async () => {
     if (!selectedBookingId) return;
 
@@ -75,6 +82,7 @@ export const BookingManagementPage: React.FC = () => {
     closeRescheduleDialog();
   };
 
+  // Get status badge class based on booking status
   const getStatusBadge = (status: string) => {
     const base =
       "px-2 py-1 rounded-full text-xs font-bold uppercase tracking-wider";

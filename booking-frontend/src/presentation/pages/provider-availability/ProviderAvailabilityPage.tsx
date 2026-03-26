@@ -4,7 +4,7 @@ import {
   useProviderAvailabilityViewModel,
   type AvailabilityListItemViewModel,
   type ProviderListItemViewModel,
-} from "./useProviderAvailabilityrViewModel";
+} from "./useProviderAvailabilityViewModel";
 
 export const ProviderAvailabilityPage: React.FC = () => {
   const {
@@ -24,15 +24,18 @@ export const ProviderAvailabilityPage: React.FC = () => {
   const [bookingError, setBookingError] = useState("");
   const [isBookingSubmitting, setIsBookingSubmitting] = useState(false);
 
+  // Fetch providers
   useEffect(() => {
     fetchProviders();
   }, [fetchProviders]);
 
+  // Fetch availability when provider or date changes
   const loadAvailability = async () => {
     if (!selectedProvider || !date) return;
     await fetchAvailability(selectedProvider, date);
   };
 
+  // Open dialog and reset state
   const openBookingDialog = (bookingDate: string) => {
     setSelectedBookingDate(bookingDate);
     setBookingError("");
@@ -40,6 +43,7 @@ export const ProviderAvailabilityPage: React.FC = () => {
     setIsBookingDialogOpen(true);
   };
 
+  // Close dialog and reset state
   const closeBookingDialog = () => {
     setIsBookingDialogOpen(false);
     setSelectedBookingDate("");
@@ -47,6 +51,7 @@ export const ProviderAvailabilityPage: React.FC = () => {
     setIsBookingSubmitting(false);
   };
 
+  // Handle booking confirmation
   const handleConfirmBooking = async () => {
     if (!selectedProvider || !selectedBookingDate) return;
 
@@ -65,8 +70,10 @@ export const ProviderAvailabilityPage: React.FC = () => {
     closeBookingDialog();
   };
 
+  // Get provider name for display in booking dialog
   const selectedProviderName =
-    providers.find((p) => p.id === selectedProvider)?.name ?? "Selected provider";
+    providers.find((p) => p.id === selectedProvider)?.name ??
+    "Selected provider";
 
   return (
     <div className="space-y-8">
@@ -88,7 +95,7 @@ export const ProviderAvailabilityPage: React.FC = () => {
               value={selectedProvider ?? ""}
               onChange={(e) =>
                 setSelectedProvider(
-                  e.target.value ? Number(e.target.value) : null
+                  e.target.value ? Number(e.target.value) : null,
                 )
               }
             >
@@ -109,11 +116,15 @@ export const ProviderAvailabilityPage: React.FC = () => {
 
           {/* Date */}
           <div className="flex flex-col gap-1.5 flex-1 min-w-50">
-            <label className="text-xs font-bold text-gray-500 uppercase ml-1">
+            <label
+              htmlFor="search-date"
+              className="text-xs font-bold text-gray-500 uppercase ml-1"
+            >
               Search Date
             </label>
 
             <input
+              id="search-date"
               type="date"
               className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 transition-all outline-none"
               value={date}
