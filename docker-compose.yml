@@ -18,12 +18,11 @@ services:
       - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./db:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-ppassword"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
 
   # ---------------- BACKEND ----------------
   backend:
@@ -31,6 +30,7 @@ services:
       context: ./booking-backend
       dockerfile: Dockerfile.dev
     container_name: booking-backend
+    restart: always
     ports:
       - "4000:4000"
     env_file:
@@ -41,6 +41,7 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+    command: sh -c "npm install && npm run migrate && npm run dev"
 
   # ---------------- FRONTEND ----------------
   frontend:
@@ -48,11 +49,12 @@ services:
       context: ./booking-frontend
       dockerfile: Dockerfile.dev
     container_name: booking-frontend
+    restart: always
     ports:
       - "5173:5173"
     volumes:
       - ./booking-frontend:/app
       - frontend_node_modules:/app/node_modules
-    command: npm run dev
     depends_on:
       - backend
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"

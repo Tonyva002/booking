@@ -19,7 +19,8 @@
     "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "start:docker": "npm run build && node dist/index.js"
+    "start:docker": "npm run build && node dist/index.js",
+    "migrate": "tsx src/shared/scripts/migrate.ts"
   },
   "dependencies": {
     "cors": "^2.8.6",
@@ -36,6 +37,7 @@
     "nodemon": "^3.1.14",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   }
 }

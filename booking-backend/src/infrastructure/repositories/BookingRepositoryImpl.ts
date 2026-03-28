@@ -1,5 +1,5 @@
 import { BookingRepository } from "../../domain/repositories/BookingRepository";
-import { pool } from "../database/mysql";
+import { db } from "../database/mysql";
 import { Booking } from "../../domain/entities/Booking";
 import { ResultSetHeader, RowDataPacket } from "mysql2";
 import { BookingStatus } from "../../shared/booking-status";
@@ -10,10 +10,9 @@ interface CountRow extends RowDataPacket {
 }
 
 export class MysqlBookingRepository implements BookingRepository {
-  // Cuenta cuántas reservas existen para un proveedor en una fecha específica,
-  // excluyendo reservas canceladas.
+  // Cuenta cuántas reservas existen para un proveedor en una fecha específica, excluyendo reservas canceladas.
   async countBookings(providerId: number, date: string): Promise<number> {
-    const [rows] = await pool.query<CountRow[]>(
+    const [rows] = await db.query<CountRow[]>(
       `SELECT COUNT(*) as total
        FROM bookings
        WHERE provider_id = ?
@@ -31,7 +30,7 @@ export class MysqlBookingRepository implements BookingRepository {
       throw new Error("Missing booking data");
     }
 
-    const [result] = await pool.query<ResultSetHeader>(
+    const [result] = await db.query<ResultSetHeader>(
       `INSERT INTO bookings
        (provider_id, client_id, booking_date, status)
        VALUES (?, ?, ?, ?)`,
@@ -48,7 +47,7 @@ export class MysqlBookingRepository implements BookingRepository {
 
   // Busca una reserva por su ID.
   async findById(id: number): Promise<Booking | null> {
-    const [rows] = await pool.query<RowDataPacket[]>(
+    const [rows] = await db.query<RowDataPacket[]>(
       `SELECT * FROM bookings WHERE id = ?`,
       [id],
     );
@@ -60,7 +59,7 @@ export class MysqlBookingRepository implements BookingRepository {
 
   // Buscar todas las reservas
   async list(): Promise<Booking[]> {
-    const [rows] = await pool.query<RowDataPacket[]>(
+    const [rows] = await db.query<RowDataPacket[]>(
       `SELECT 
         b.id,
         b.booking_date,
@@ -84,7 +83,7 @@ export class MysqlBookingRepository implements BookingRepository {
     newDate: string,
     version: number,
   ): Promise<boolean> {
-    const [result] = await pool.query<ResultSetHeader>(
+    const [result] = await db.query<ResultSetHeader>(
       `UPDATE bookings
        SET booking_date = ?, version = version + 1
        WHERE id = ? AND version = ?`,
@@ -101,7 +100,7 @@ export class MysqlBookingRepository implements BookingRepository {
     status: BookingStatus,
     version: number,
   ): Promise<boolean> {
-    const [result] = await pool.query<ResultSetHeader>(
+    const [result] = await db.query<ResultSetHeader>(
       `UPDATE bookings
        SET status = ?, version = version + 1
        WHERE id = ? AND version = ?`,

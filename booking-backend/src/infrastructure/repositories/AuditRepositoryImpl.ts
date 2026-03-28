@@ -1,7 +1,7 @@
 import { ResultSetHeader } from "mysql2";
 import { AuditRepository } from "../../domain/repositories/AuditRepository";
 import { AuditActions } from "../../shared/audit-actions";
-import { pool } from "../database/mysql";
+import { db } from "../database/mysql";
 
 export class MysqlAuditRepository implements AuditRepository {
   /**
@@ -18,7 +18,7 @@ export class MysqlAuditRepository implements AuditRepository {
     oldValue: Record<string, unknown> | null,
     newValue: Record<string, unknown> | null,
   ): Promise<void> {
-    await pool.query<ResultSetHeader>(
+    await db.query<ResultSetHeader>(
       `INSERT INTO booking_audit_log
        (booking_id, action, old_value, new_value)
        VALUES (?, ?, ?, ?)`,

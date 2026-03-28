@@ -7,4 +7,6 @@ RUN npm install
 
 COPY . .
 
-CMD ["npm", "run", "dev"]
+EXPOSE 4000
+
+CMD ["sh", "-c", "npm run migrate && npm run dev"]
