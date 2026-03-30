@@ -68,7 +68,7 @@ http://localhost:5173
 ## Screenshots
 
 ### 1)
-![Screen 1](https://github.com/user-attachments/assets/bff62f4c-16b7-4cd8-9595-cdff50dc5b90)
+![Screen 1](https://github.com/user-attachments/assets/414ea235-9e5a-4c78-9d0e-a57a077443cf)
 
 ### 2)
 ![Screen 2](https://github.com/user-attachments/assets/2dabfc99-9a17-4f64-ab04-348ecc7ebb65)
