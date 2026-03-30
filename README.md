@@ -71,13 +71,13 @@ http://localhost:5173
 ![Screen 1](https://github.com/user-attachments/assets/414ea235-9e5a-4c78-9d0e-a57a077443cf)
 
 ### 2)
-![Screen 2](https://github.com/user-attachments/assets/2dabfc99-9a17-4f64-ab04-348ecc7ebb65)
+![Screen 2](https://github.com/user-attachments/assets/dac475c7-0b5f-4f13-9cfd-bcd165b46b21)
 
 ### 3)
-![Screen 3](https://github.com/user-attachments/assets/f4f133cf-1a8c-44d2-ad1d-95b4025003aa)
+![Screen 3](https://github.com/user-attachments/assets/092abef4-9e0b-43c2-8440-c927b24280bd)
 
 ### 4)
-![Screen 4](https://github.com/user-attachments/assets/b9b89ab0-7aa1-4b4a-b340-b2fff3da1658)
+![Screen 4](https://github.com/user-attachments/assets/30eeaa72-90b0-4372-94a5-f009e731a182)
 
 ### 5)
 ![Screen 5](https://github.com/user-attachments/assets/0b3508d1-4530-4717-a8b9-3d72a322cd66)
