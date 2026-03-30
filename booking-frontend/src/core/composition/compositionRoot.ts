@@ -3,14 +3,14 @@
 // ------------------------------
 import BookingApiDataSource from "../../data/datasources/BookingApiDataSource";
 import ProviderApiDataSource from "../../data/datasources/ProviderApiDataSource";
-import AuditApiDataSource from "../../data/datasources/AuditDataSource";
+import ClientApiDataSource from "../../data/datasources/ClientApiDataSource";
 
 // ------------------------------
 // Repositorios
 // ------------------------------
 import { BookingRepositoryImpl } from "../../data/repositories/BookingRepositoryImpl";
 import { ProviderRepositoryImpl } from "../../data/repositories/ProviderRepositoryImpl";
-import { AuditRepositoryImpl } from "../../data/repositories/AuditRepositoryImpl";
+import { ClientRepositoryImpl } from "../../data/repositories/ClientRepositoryImpl";  
 
 // ------------------------------
 // Casos de uso
@@ -22,20 +22,21 @@ import { ConfirmBookingUseCase } from "../../domain/usecases/booking/ConfirmBook
 import { CancelBookingUseCase } from "../../domain/usecases/booking/CancelBookingUseCase";
 import { GetBookingsUseCase } from "../../domain/usecases/booking/GetBookingUseCase";
 import { ListProvidersUseCase } from '../../domain/usecases/provider/ListProviderUseCase';
+import { ListClientUseCase } from '../../domain/usecases/client/ListClientUseCase';
 
 // ------------------------------
 // Instancia de DataSources
 // ------------------------------
 const bookingApiDataSource = new BookingApiDataSource();
 const providerApiDataSource = new ProviderApiDataSource();
-const auditApiDataSource = new AuditApiDataSource();
+const clientApiDataSource = new ClientApiDataSource();
 
 // ------------------------------
 // Instancia de Repositories
 // ------------------------------
 const bookingRepository = new BookingRepositoryImpl(bookingApiDataSource);
 const providerRepository = new ProviderRepositoryImpl(providerApiDataSource);
-const auditRepository = new AuditRepositoryImpl(auditApiDataSource);
+const clientRepository = new ClientRepositoryImpl(clientApiDataSource);
 
 // ------------------------------
 // Instancia de UseCases
@@ -58,11 +59,7 @@ export const confirmBookingUseCase = new ConfirmBookingUseCase(
 
 export const cancelBookingUseCase = new CancelBookingUseCase(bookingRepository);
 
-export const repositories = {
-  bookingRepository,
-  providerRepository,
-  auditRepository,
-};
+export const listClientUseCase = new ListClientUseCase(clientRepository);
 
 export const bookingUseCase = {
   getBookings: getBookingsUseCase,

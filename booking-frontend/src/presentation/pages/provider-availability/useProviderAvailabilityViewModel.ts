@@ -1,13 +1,15 @@
-import {useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 
 import {
   getAvailabilityUseCase,
   createBookingUseCase,
   listProvidersUseCase,
+  listClientUseCase,
 } from "../../../core/composition/compositionRoot";
 
 import type { Provider } from "../../../domain/entities/Provider";
 import type { Availability } from "../../../domain/entities/Availability";
+import type { Client } from "../../../domain/entities/Client";
 
 export interface AvailabilityListItemViewModel {
   date: string;
@@ -27,64 +29,84 @@ export const useProviderAvailabilityViewModel = () => {
   const [availability, setAvailability] = useState<
     AvailabilityListItemViewModel[]
   >([]);
-  const [loadingProviders, setLoadingProviders] = useState(false);
+  const [clients, setClients] = useState<Client[]>([]);
+  const [loading, setLoading] = useState(false);
 
   // Listar proveedores
   const fetchProviders = useCallback(async (): Promise<void> => {
-  setLoadingProviders(true);
+    setLoading(true);
 
-  const data: Provider[] = await listProvidersUseCase.execute();
+    try {
+      const data: Provider[] = await listProvidersUseCase.execute();
 
-  const mapped = data.map((p) => ({
-    id: p.id,
-    name: p.name,
-    maxBookingsPerDay: p.max_bookings_per_day,
-  }));
+      const mapped: ProviderListItemViewModel[] = data.map((p) => ({
+        id: p.id,
+        name: p.name,
+        maxBookingsPerDay: p.max_bookings_per_day,
+      }));
 
-  setProviders(mapped);
-  setLoadingProviders(false);
-}, []);
+      setProviders(mapped);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Listar clientes
+  const fetchClients = useCallback(async (): Promise<void> => {
+    setLoading(true);
+
+    try {
+      const data: Client[] = await listClientUseCase.execute();
+      setClients(data);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   // Buscar disponibilidad
-  const fetchAvailability = async (providerId: number, date: string): Promise<void> => {
-      const data: Availability = await getAvailabilityUseCase.execute(
-        providerId,
-        date,
-      );
+  const fetchAvailability = async (
+    providerId: number,
+    date: string
+  ): Promise<void> => {
+    const data: Availability = await getAvailabilityUseCase.execute(
+      providerId,
+      date
+    );
 
-      const mapped: AvailabilityListItemViewModel[] = [
-        {
-          date: data.date,
-          remainingSlots: data.remainingSlots,
-          reason: data.reason,
-          available: data.remainingSlots > 0,
-        },
-      ];
+    const mapped: AvailabilityListItemViewModel[] = [
+      {
+        date: data.date,
+        remainingSlots: data.remainingSlots,
+        reason: data.reason,
+        available: data.remainingSlots > 0,
+      },
+    ];
 
-      setAvailability(mapped);
-    };
+    setAvailability(mapped);
+  };
 
   // Crear reserva
   const book = async (providerId: number, clientId: number, date: string) => {
-      try {
-        await createBookingUseCase.execute(providerId, clientId, date);
-
-        return { success: true };
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          return { success: false, message: error.message };
-        }
-
-        return { success: false, message: "Error inesperado" };
+    try {
+      await createBookingUseCase.execute(providerId, clientId, date);
+      return { success: true };
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return { success: false, message: error.message };
       }
-    };
+
+      return { success: false, message: "Error inesperado" };
+    }
+  };
 
   return {
     providers,
+    clients,
     availability,
-    loadingProviders,
+    loadingProviders: loading,
     fetchProviders,
     fetchAvailability,
+    fetchClients,
     book,
   };
 };

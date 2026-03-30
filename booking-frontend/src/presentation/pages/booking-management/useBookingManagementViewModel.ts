@@ -30,17 +30,22 @@ export const useBookingManagementViewModel = (
 ) => {
   const [bookings, setBookings] = useState<BookingListItemViewModel[]>([]);
 
-  const dateFormatter = new Intl.DateTimeFormat("es-ES", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  });
+  const formatSqlDate = (value: string): string => {
+    if (!value) return "";
+
+    const onlyDate = value.split("T")[0]; // "2026-04-07"
+    const [year, month, day] = onlyDate.split("-");
+
+    if (!year || !month || !day) return value;
+
+    return `${day}/${month}/${year}`;
+  };
 
   const mapBooking = (booking: Booking): BookingListItemViewModel => ({
     id: booking.id!,
     providerName: booking.provider_name,
     clientName: booking.client_name,
-    date: dateFormatter.format(new Date(booking.booking_date)),
+    date: formatSqlDate(booking.booking_date),
     status: booking.status,
   });
 

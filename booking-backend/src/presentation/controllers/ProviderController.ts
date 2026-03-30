@@ -11,7 +11,6 @@ const availabilityUseCase = new CheckAvailabilityUseCase(
   bookingRepo,
   providerRepo
 );
-
 const listProvidersUseCase = new ListProvidersUseCase(providerRepo);
 
 export class ProviderController {

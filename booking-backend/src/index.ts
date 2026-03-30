@@ -6,6 +6,7 @@ import cors from "cors";
 
 import bookingRoutes from "./presentation/routes/bookingRoutes";
 import providerRoutes from "./presentation/routes/providerRoutes";
+import clientRoutes from "./presentation/routes/clientRoutes";
 
 const PORT = process.env.PORT || 4000;
 
@@ -33,6 +34,7 @@ app.get("/health", (_req: Request, res: Response) => {
 // Rutas API
 app.use("/api/v1", bookingRoutes);
 app.use("/api/v1", providerRoutes);
+app.use("/api/v1", clientRoutes);
 
 
 // Controlador de errores global

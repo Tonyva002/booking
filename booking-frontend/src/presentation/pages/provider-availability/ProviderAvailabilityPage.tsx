@@ -6,17 +6,25 @@ import {
   type ProviderListItemViewModel,
 } from "./useProviderAvailabilityViewModel";
 
+type ClientListItemViewModel = {
+  id: number;
+  name: string;
+};
+
 export const ProviderAvailabilityPage: React.FC = () => {
   const {
     providers,
+    clients,
     availability,
     loadingProviders,
     fetchProviders,
+    fetchClients,
     fetchAvailability,
     book,
   } = useProviderAvailabilityViewModel();
 
   const [selectedProvider, setSelectedProvider] = useState<number | null>(null);
+  const [selectedClient, setSelectedClient] = useState<number | null>(null);
   const [date, setDate] = useState("");
 
   const [isBookingDialogOpen, setIsBookingDialogOpen] = useState(false);
@@ -29,6 +37,11 @@ export const ProviderAvailabilityPage: React.FC = () => {
     fetchProviders();
   }, [fetchProviders]);
 
+  // Fetch clients
+  useEffect(() => {
+    fetchClients();
+  }, [fetchClients]);
+
   // Fetch availability when provider or date changes
   const loadAvailability = async () => {
     if (!selectedProvider || !date) return;
@@ -37,6 +50,11 @@ export const ProviderAvailabilityPage: React.FC = () => {
 
   // Open dialog and reset state
   const openBookingDialog = (bookingDate: string) => {
+    if (!selectedClient) {
+      setBookingError("Please select a client before booking.");
+      return;
+    }
+
     setSelectedBookingDate(bookingDate);
     setBookingError("");
     setIsBookingSubmitting(false);
@@ -53,12 +71,16 @@ export const ProviderAvailabilityPage: React.FC = () => {
 
   // Handle booking confirmation
   const handleConfirmBooking = async () => {
-    if (!selectedProvider || !selectedBookingDate) return;
+    if (!selectedProvider || !selectedClient || !selectedBookingDate) return;
 
     setIsBookingSubmitting(true);
     setBookingError("");
 
-    const result = await book(selectedProvider, 1, selectedBookingDate);
+    const result = await book(
+      selectedProvider,
+      selectedClient,
+      selectedBookingDate
+    );
 
     if (!result.success) {
       setBookingError(result.message ?? "Unable to complete booking.");
@@ -74,6 +96,11 @@ export const ProviderAvailabilityPage: React.FC = () => {
   const selectedProviderName =
     providers.find((p) => p.id === selectedProvider)?.name ??
     "Selected provider";
+
+  // Get client name for display in booking dialog
+  const selectedClientName =
+    clients.find((c: ClientListItemViewModel) => c.id === selectedClient)?.name ??
+    "Selected client";
 
   return (
     <div className="space-y-8">
@@ -95,7 +122,7 @@ export const ProviderAvailabilityPage: React.FC = () => {
               value={selectedProvider ?? ""}
               onChange={(e) =>
                 setSelectedProvider(
-                  e.target.value ? Number(e.target.value) : null,
+                  e.target.value ? Number(e.target.value) : null
                 )
               }
             >
@@ -108,6 +135,36 @@ export const ProviderAvailabilityPage: React.FC = () => {
                 providers.map((p: ProviderListItemViewModel) => (
                   <option key={p.id} value={p.id}>
                     {p.name}
+                  </option>
+                ))
+              )}
+            </select>
+          </div>
+
+          {/* Select Client */}
+          <div className="flex flex-col gap-1.5 flex-1 min-w-50">
+            <label className="text-xs font-bold text-gray-500 uppercase ml-1">
+              Select Client
+            </label>
+
+            <select
+              className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 transition-all outline-none"
+              value={selectedClient ?? ""}
+              onChange={(e) =>
+                setSelectedClient(
+                  e.target.value ? Number(e.target.value) : null
+                )
+              }
+            >
+              <option value="" disabled>
+                Choose a client...
+              </option>
+              {clients.length === 0 ? (
+                <option disabled>Loading clients...</option>
+              ) : (
+                clients.map((c: ClientListItemViewModel) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
                   </option>
                 ))
               )}
@@ -142,7 +199,21 @@ export const ProviderAvailabilityPage: React.FC = () => {
             Check Availability
           </button>
         </div>
+
+        {/* Validation message */}
+        {!selectedClient && (
+          <p className="text-sm text-amber-600 font-medium">
+            Please select a client before booking an appointment.
+          </p>
+        )}
       </div>
+
+      {/* Error global antes del modal */}
+      {bookingError && !isBookingDialogOpen && (
+        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {bookingError}
+        </div>
+      )}
 
       {/* Tabla de Resultados */}
       <div className="overflow-hidden bg-white rounded-xl border border-gray-200 shadow-sm">
@@ -220,7 +291,8 @@ export const ProviderAvailabilityPage: React.FC = () => {
                     {a.available ? (
                       <button
                         onClick={() => openBookingDialog(a.date)}
-                        className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded shadow hover:shadow-lg transition-all"
+                        disabled={!selectedClient}
+                        className="bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-xs font-bold px-4 py-2 rounded shadow hover:shadow-lg transition-all"
                       >
                         Book Now
                       </button>
@@ -254,13 +326,22 @@ export const ProviderAvailabilityPage: React.FC = () => {
             </div>
 
             <div className="px-6 py-5 space-y-4">
-              <div className="rounded-xl border border-gray-200 bg-gray-50 p-4 space-y-2">
+              <div className="rounded-xl border border-gray-200 bg-gray-50 p-4 space-y-3">
                 <div>
                   <p className="text-xs uppercase tracking-wider text-gray-500 font-semibold">
                     Provider
                   </p>
                   <p className="text-sm font-medium text-gray-900">
                     {selectedProviderName}
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-xs uppercase tracking-wider text-gray-500 font-semibold">
+                    Client
+                  </p>
+                  <p className="text-sm font-medium text-gray-900">
+                    {selectedClientName}
                   </p>
                 </div>
 
