@@ -1,5 +1,4 @@
-export interface Provider {
-  id: number;
+export interface CreateProviderDTO {
   name: string;
   maxBookingsPerDay: number;
 }

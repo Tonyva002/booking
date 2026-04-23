@@ -4,7 +4,9 @@ import {
   getAvailabilityUseCase,
   createBookingUseCase,
   listProvidersUseCase,
-  listClientUseCase,
+  listClientsUseCase,
+  createClientUseCase,
+  createProviderUseCase,
 } from "../../../core/composition/compositionRoot";
 
 import type { Provider } from "../../../domain/entities/Provider";
@@ -30,62 +32,71 @@ export const useProviderAvailabilityViewModel = () => {
     AvailabilityListItemViewModel[]
   >([]);
   const [clients, setClients] = useState<Client[]>([]);
-  const [loading, setLoading] = useState(false);
 
-  // Listar proveedores
-  const fetchProviders = useCallback(async (): Promise<void> => {
-    setLoading(true);
+  const [loadingProviders, setLoadingProviders] = useState(false);
+  const [loadingClients, setLoadingClients] = useState(false);
+  const [loadingAvailability, setLoadingAvailability] = useState(false);
 
+  // Providers
+  const fetchProviders = useCallback(async () => {
+    setLoadingProviders(true);
     try {
       const data: Provider[] = await listProvidersUseCase.execute();
 
-      const mapped: ProviderListItemViewModel[] = data.map((p) => ({
-        id: p.id,
-        name: p.name,
-        maxBookingsPerDay: p.max_bookings_per_day,
-      }));
-
-      setProviders(mapped);
+      setProviders(
+        data.map((p) => ({
+          id: p.id,
+          name: p.name,
+          maxBookingsPerDay: p.max_bookings_per_day,
+        })),
+      );
     } finally {
-      setLoading(false);
+      setLoadingProviders(false);
     }
   }, []);
 
-  // Listar clientes
-  const fetchClients = useCallback(async (): Promise<void> => {
-    setLoading(true);
-
+  // Clients
+  const fetchClients = useCallback(async () => {
+    setLoadingClients(true);
     try {
-      const data: Client[] = await listClientUseCase.execute();
+      const data: Client[] = await listClientsUseCase.execute();
       setClients(data);
     } finally {
-      setLoading(false);
+      setLoadingClients(false);
     }
   }, []);
 
-  // Buscar disponibilidad
-  const fetchAvailability = async (
-    providerId: number,
-    date: string
-  ): Promise<void> => {
-    const data: Availability = await getAvailabilityUseCase.execute(
-      providerId,
-      date
-    );
+  // Availability 
+  const fetchAvailability = useCallback(
+    async (providerId: number, date: string) => {
+      setLoadingAvailability(true);
 
-    const mapped: AvailabilityListItemViewModel[] = [
-      {
-        date: data.date,
-        remainingSlots: data.remainingSlots,
-        reason: data.reason,
-        available: data.remainingSlots > 0,
-      },
-    ];
+      try {
+        const data: Availability = await getAvailabilityUseCase.execute(
+          providerId,
+          date,
+        );
 
-    setAvailability(mapped);
-  };
 
-  // Crear reserva
+        setAvailability([
+          {
+            date: data.date,
+            remainingSlots: data.remainingSlots,
+            reason: data.reason,
+            available: data.isAvailable,
+          },
+        ]);
+      } catch (error) {
+        console.error(error);
+        setAvailability([]);
+      } finally {
+        setLoadingAvailability(false);
+      }
+    },
+    [],
+  );
+
+  // Booking
   const book = async (providerId: number, clientId: number, date: string) => {
     try {
       await createBookingUseCase.execute(providerId, clientId, date);
@@ -94,19 +105,64 @@ export const useProviderAvailabilityViewModel = () => {
       if (error instanceof Error) {
         return { success: false, message: error.message };
       }
-
       return { success: false, message: "Error inesperado" };
     }
   };
+
+  // Create client
+  const createClient = async (name: string, email: string, phone: string) => {
+    try {
+      const result = await createClientUseCase.execute(name, email, phone);
+
+      if (!result.success) {
+        return { success: false, message: result.error };
+      }
+
+      return { success: true };
+    } catch (error) {
+      if (error instanceof Error) {
+        return { success: false, message: error.message };
+      }
+
+      return { success: false, message: "Error creando cliente" };
+    }
+  };
+
+  // Create provider
+  const createProvider = async (name: string, maxBookingsPerDay: number) => {
+    try {
+      await createProviderUseCase.execute(name, maxBookingsPerDay);
+      return { success: true };
+    } catch {
+      return { success: false, message: "Error creando provider" };
+    }
+  };
+
+  // Helpers
+  const getProviderName = (id: number | null) =>
+    providers.find((p) => p.id === id)?.name ?? "Selected provider";
+
+  const getClientName = (id: number | null) =>
+    clients.find((c) => c.id === id)?.name ?? "Selected client";
 
   return {
     providers,
     clients,
     availability,
-    loadingProviders: loading,
+
+    loadingProviders,
+    loadingClients,
+    loadingAvailability,
+
     fetchProviders,
-    fetchAvailability,
     fetchClients,
+    fetchAvailability,
+
     book,
+    createClient,
+    createProvider,
+
+    getProviderName,
+    getClientName,
   };
 };

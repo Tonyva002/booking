@@ -45,9 +45,49 @@ export class MysqlProviderRepository implements ProviderRepository {
   }
 
   // Listar los proveedores
-  async list(): Promise<Provider[]> {
+  async findAll(): Promise<Provider[]> {
     const [rows] = await db.query(`SELECT * FROM providers ORDER BY name`);
 
     return rows as Provider[];
   }
+
+   async create(data: Omit<Provider, "id">): Promise<number> {
+  const connection = await db.getConnection();
+
+  try {
+    await connection.beginTransaction();
+
+    const [result]: any = await connection.execute(
+      `
+      INSERT INTO providers (name, max_bookings_per_day)
+      VALUES (?, ?)
+      `,
+      [data.name, data.maxBookingsPerDay]
+    );
+
+    const providerId = result.insertId;
+
+    // 🔥 INSERTAR DÍAS LABORALES POR DEFECTO (lunes a sábado)
+    const days = [1, 2, 3, 4, 5, 6];
+
+    for (const day of days) {
+      await connection.execute(
+        `
+        INSERT INTO provider_working_days (provider_id, day_of_week)
+        VALUES (?, ?)
+        `,
+        [providerId, day]
+      );
+    }
+
+    await connection.commit();
+
+    return providerId;
+  } catch (error) {
+    await connection.rollback();
+    throw error;
+  } finally {
+    connection.release();
+  }
+}
 }

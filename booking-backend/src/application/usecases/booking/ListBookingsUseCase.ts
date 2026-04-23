@@ -6,7 +6,7 @@ export class ListBookingsUseCase {
 
   async execute(): Promise<Booking[]> {
     try {
-      const bookings = await this.bookingRepo.list();
+      const bookings = await this.bookingRepo.findAll();
 
       if (!bookings.length) {
         throw new Error("No hay reservas registradas");

@@ -22,7 +22,9 @@ import { ConfirmBookingUseCase } from "../../domain/usecases/booking/ConfirmBook
 import { CancelBookingUseCase } from "../../domain/usecases/booking/CancelBookingUseCase";
 import { GetBookingsUseCase } from "../../domain/usecases/booking/GetBookingUseCase";
 import { ListProvidersUseCase } from '../../domain/usecases/provider/ListProviderUseCase';
+import { CreateProviderUseCase } from "../../domain/usecases/provider/CreateProviderUseCase";
 import { ListClientUseCase } from '../../domain/usecases/client/ListClientUseCase';
+import { CreateClientUseCase } from '../../domain/usecases/client/CreateClientUseCase';
 
 // ------------------------------
 // Instancia de DataSources
@@ -39,31 +41,31 @@ const providerRepository = new ProviderRepositoryImpl(providerApiDataSource);
 const clientRepository = new ClientRepositoryImpl(clientApiDataSource);
 
 // ------------------------------
-// Instancia de UseCases
+// Instancia de UseCases booking
 // ------------------------------
-export const getAvailabilityUseCase = new GetAvailabilityUseCase(providerRepository);
-
-export const listProvidersUseCase = new ListProvidersUseCase(providerRepository);
-
 export const createBookingUseCase = new CreateBookingUseCase(bookingRepository);
-
 export const getBookingsUseCase = new GetBookingsUseCase(bookingRepository);
-
-export const rescheduleBookingUseCase = new RescheduleBookingUseCase(
-  bookingRepository,
-);
-
-export const confirmBookingUseCase = new ConfirmBookingUseCase(
-  bookingRepository,
-);
-
+export const rescheduleBookingUseCase = new RescheduleBookingUseCase(bookingRepository,);
+export const confirmBookingUseCase = new ConfirmBookingUseCase(bookingRepository);
 export const cancelBookingUseCase = new CancelBookingUseCase(bookingRepository);
-
-export const listClientUseCase = new ListClientUseCase(clientRepository);
-
 export const bookingUseCase = {
   getBookings: getBookingsUseCase,
   confirmBooking: confirmBookingUseCase,
   cancelBooking: cancelBookingUseCase,
   rescheduleBooking: rescheduleBookingUseCase,
 };
+
+// ------------------------------
+// Instancia de UseCases provider
+// ------------------------------
+export const getAvailabilityUseCase = new GetAvailabilityUseCase(providerRepository);
+export const listProvidersUseCase = new ListProvidersUseCase(providerRepository);
+export const createProviderUseCase = new CreateProviderUseCase(providerRepository);
+
+
+
+// ------------------------------
+// Instancia de UseCases client
+// ------------------------------
+export const listClientsUseCase = new ListClientUseCase(clientRepository);
+export const createClientUseCase = new CreateClientUseCase(clientRepository);

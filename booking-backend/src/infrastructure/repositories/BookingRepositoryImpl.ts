@@ -58,7 +58,7 @@ export class MysqlBookingRepository implements BookingRepository {
   }
 
   // Buscar todas las reservas
-  async list(): Promise<Booking[]> {
+  async findAll(): Promise<Booking[]> {
     const [rows] = await db.query<RowDataPacket[]>(
       `SELECT 
         b.id,

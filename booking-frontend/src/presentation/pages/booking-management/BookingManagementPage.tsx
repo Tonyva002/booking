@@ -3,6 +3,7 @@ import {
   useBookingManagementViewModel,
   type BookingListItemViewModel,
 } from "../booking-management/useBookingManagementViewModel";
+import { BookingModal } from "../../components/BookingModal";
 
 export const BookingManagementPage: React.FC = () => {
   const {
@@ -14,34 +15,31 @@ export const BookingManagementPage: React.FC = () => {
   } = useBookingManagementViewModel();
 
   const [isRescheduleOpen, setIsRescheduleOpen] = useState(false);
-  const [selectedBookingId, setSelectedBookingId] = useState<number | null>(null);
+  const [selectedBookingId, setSelectedBookingId] = useState<number | null>(
+    null,
+  );
   const [newDate, setNewDate] = useState("");
   const [rescheduleError, setRescheduleError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Fetch bookings on component mount
   useEffect(() => {
     fetchBookings();
   }, [fetchBookings]);
 
-  // Refresh data after any action
   const refreshData = async () => {
     await fetchBookings();
   };
 
-  // Handle confirm action
   const handleConfirm = async (id: number) => {
     await confirmBooking(id);
     await refreshData();
   };
 
-  // Handle cancel action
   const handleCancel = async (id: number) => {
     await cancelBooking(id);
     await refreshData();
   };
 
-  // Open reschedule dialog and reset state
   const openRescheduleDialog = (id: number) => {
     setSelectedBookingId(id);
     setNewDate("");
@@ -49,7 +47,6 @@ export const BookingManagementPage: React.FC = () => {
     setIsRescheduleOpen(true);
   };
 
-  // Close reschedule dialog and reset state
   const closeRescheduleDialog = () => {
     setIsRescheduleOpen(false);
     setSelectedBookingId(null);
@@ -58,7 +55,6 @@ export const BookingManagementPage: React.FC = () => {
     setIsSubmitting(false);
   };
 
-  // Handle reschedule submission
   const handleSubmitReschedule = async () => {
     if (!selectedBookingId) return;
 
@@ -82,7 +78,6 @@ export const BookingManagementPage: React.FC = () => {
     closeRescheduleDialog();
   };
 
-  // Get status badge class based on booking status
   const getStatusBadge = (status: string) => {
     const base =
       "px-2 py-1 rounded-full text-xs font-bold uppercase tracking-wider";
@@ -98,12 +93,14 @@ export const BookingManagementPage: React.FC = () => {
     }
   };
 
+  // 🔥 BOTÓN BASE UNIFICADO
+  const baseBtn =
+    "text-xs px-3 py-1.5 rounded border transition-all whitespace-nowrap";
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-800 tracking-tight">
-          Booking Management
-        </h1>
+        <h1 className="text-2xl font-bold text-gray-800">Booking Management</h1>
         <button
           onClick={refreshData}
           className="text-sm bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1.5 rounded transition-colors"
@@ -116,19 +113,19 @@ export const BookingManagementPage: React.FC = () => {
         <table className="w-full text-left border-collapse">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
-              <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">
                 Provider
               </th>
-              <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">
                 Client
               </th>
-              <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">
                 Date
               </th>
-              <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">
+              <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase text-center">
                 Status
               </th>
-              <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">
+              <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase text-right">
                 Actions
               </th>
             </tr>
@@ -146,10 +143,7 @@ export const BookingManagementPage: React.FC = () => {
               </tr>
             ) : (
               bookings.map((b: BookingListItemViewModel) => (
-                <tr
-                  key={b.id}
-                  className="hover:bg-blue-50/30 transition-colors group"
-                >
+                <tr key={b.id} className="hover:bg-blue-50/30 transition">
                   <td className="px-6 py-4 font-medium text-gray-900">
                     {b.providerName}
                   </td>
@@ -158,31 +152,34 @@ export const BookingManagementPage: React.FC = () => {
                   <td className="px-6 py-4 text-center">
                     <span className={getStatusBadge(b.status)}>{b.status}</span>
                   </td>
-                  <td className="px-6 py-4 text-right space-x-2">
-                    {b.status === "Pending" && (
-                      <button
-                        onClick={() => handleConfirm(b.id)}
-                        className="bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-1.5 rounded shadow-sm transition-all transform active:scale-95"
-                      >
-                        Confirm
-                      </button>
-                    )}
 
-                    {b.status !== "Canceled" && (
-                      <button
-                        onClick={() => handleCancel(b.id)}
-                        className="text-red-600 hover:bg-red-50 text-xs px-3 py-1.5 rounded border border-transparent hover:border-red-200 transition-colors"
-                      >
-                        Cancel
-                      </button>
-                    )}
+                  <td className="px-6 py-4">
+                    <div className="flex justify-end gap-4 min-w-55">
+                      {b.status === "Pending" && (
+                        <button
+                          onClick={() => handleConfirm(b.id)}
+                          className={`${baseBtn} bg-green-600 text-white border-green-600 hover:bg-green-700`}
+                        >
+                          Confirm
+                        </button>
+                      )}
 
-                    <button
-                      onClick={() => openRescheduleDialog(b.id)}
-                      className="text-blue-600 hover:bg-blue-50 text-xs px-3 py-1.5 rounded border border-transparent hover:border-blue-200 transition-colors"
-                    >
-                      Reschedule
-                    </button>
+                      {b.status !== "Canceled" && (
+                        <button
+                          onClick={() => handleCancel(b.id)}
+                          className={`${baseBtn} text-red-600 border-red-200 hover:bg-red-50`}
+                        >
+                          Cancel
+                        </button>
+                      )}
+
+                      <button
+                        onClick={() => openRescheduleDialog(b.id)}
+                        className={`${baseBtn} text-blue-600 border-blue-200 hover:bg-blue-50`}
+                      >
+                        Reschedule
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))
@@ -191,63 +188,24 @@ export const BookingManagementPage: React.FC = () => {
         </table>
       </div>
 
-      <p className="text-[10px] text-gray-400 text-right uppercase tracking-widest">
-        Fullstack Technical Test - Concurrency & Audit logs enabled
-      </p>
-
       {/* MODAL */}
-      {isRescheduleOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
-          <div className="w-full max-w-md rounded-2xl bg-white shadow-2xl border border-gray-200 overflow-hidden animate-in fade-in zoom-in duration-200">
-            <div className="px-6 py-5 border-b border-gray-100">
-              <h2 className="text-lg font-semibold text-gray-900">
-                Reschedule Booking
-              </h2>
-              <p className="text-sm text-gray-500 mt-1">
-                Select a new date for this booking.
-              </p>
-            </div>
-
-            <div className="px-6 py-5 space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  New date
-                </label>
-                <input
-                  type="date"
-                  value={newDate}
-                  onChange={(e) => setNewDate(e.target.value)}
-                  className="w-full rounded-xl border border-gray-300 px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                />
-              </div>
-
-              {rescheduleError && (
-                <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                  {rescheduleError}
-                </div>
-              )}
-            </div>
-
-            <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-3">
-              <button
-                onClick={closeRescheduleDialog}
-                disabled={isSubmitting}
-                className="px-4 py-2 text-sm rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-100 transition disabled:opacity-50"
-              >
-                Cancel
-              </button>
-
-              <button
-                onClick={handleSubmitReschedule}
-                disabled={isSubmitting}
-                className="px-4 py-2 text-sm rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition shadow-sm disabled:opacity-50"
-              >
-                {isSubmitting ? "Saving..." : "Save changes"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <BookingModal
+        isOpen={isRescheduleOpen}
+        title="Reschedule Booking"
+        description="Select a new date"
+        confirmText="Save changes"
+        error={rescheduleError}
+        isSubmitting={isSubmitting}
+        onClose={closeRescheduleDialog}
+        onConfirm={handleSubmitReschedule}
+      >
+        <input
+          type="date"
+          value={newDate}
+          onChange={(e) => setNewDate(e.target.value)}
+          className="w-full border p-2 rounded"
+        />
+      </BookingModal>
     </div>
   );
 };

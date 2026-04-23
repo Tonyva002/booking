@@ -2,8 +2,6 @@ import { Client } from "../entities/Client";
 
 export interface ClientRepository {
 
-  create(client: Client): Promise<Client>;
-
-  list(): Promise<Client[]>;
-
+  create(data: Omit<Client, "id">): Promise<number>;
+  findAll(): Promise<Client[]>;
 }

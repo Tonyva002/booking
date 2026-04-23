@@ -5,6 +5,6 @@ export class ListProvidersUseCase {
   constructor(private providerRepo: ProviderRepository) {}
 
   async execute(): Promise<Provider[]> {
-    return await this.providerRepo.list();
+    return await this.providerRepo.findAll();
   }
 }

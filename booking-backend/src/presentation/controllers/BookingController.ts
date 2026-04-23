@@ -30,51 +30,42 @@ const auditRepo = new MysqlAuditRepository();
 // Caso de uso de disponibilidad
 const availabilityUseCase = new CheckAvailabilityUseCase(
   bookingRepo,
-  providerRepo
+  providerRepo,
 );
 
 // Casos de uso
 const createBookingUseCase = new CreateBookingUseCase(
   bookingRepo,
   auditRepo,
-  availabilityUseCase
+  availabilityUseCase,
 );
 
-const cancelBookingUseCase = new CancelBookingUseCase(
-  bookingRepo,
-  auditRepo
-);
+const cancelBookingUseCase = new CancelBookingUseCase(bookingRepo, auditRepo);
 
-const confirmBookingUseCase = new ConfirmBookingUseCase(
-  bookingRepo,
-  auditRepo
-);
+const confirmBookingUseCase = new ConfirmBookingUseCase(bookingRepo, auditRepo);
 
 const rescheduleBookingUseCase = new RescheduleBookingUseCase(
   bookingRepo,
   auditRepo,
-  availabilityUseCase
+  availabilityUseCase,
 );
 
-const listBookingsUseCase = new ListBookingsUseCase(
-  bookingRepo
-);
+const listBookingsUseCase = new ListBookingsUseCase(bookingRepo);
 
 export class BookingController {
-
-
   // Listar las reservas
-  list = async (_req: Request, res: Response) => {
+  findAll = async (_req: Request, res: Response) => {
     try {
       const bookings = await listBookingsUseCase.execute();
       return res.json(bookings);
     } catch (error: unknown) {
       return res.status(500).json({
-        error: error instanceof Error ? error.message : "Error interno del servidor",
+        error:
+          error instanceof Error ? error.message : "Error interno del servidor",
       });
     }
   };
- 
+
   // Crea una nueva reserva
   create = async (req: Request, res: Response) => {
     try {
@@ -91,9 +82,7 @@ export class BookingController {
       return res.status(201).json({
         bookingId: id,
       });
-
     } catch (error: unknown) {
-
       if (error instanceof z.ZodError) {
         return res.status(400).json({
           error: error.issues,
@@ -101,55 +90,51 @@ export class BookingController {
       }
 
       return res.status(500).json({
-        error: error instanceof Error ? error.message : "Error interno del servidor",
+        error:
+          error instanceof Error ? error.message : "Error interno del servidor",
       });
-
     }
   };
-  
-  
+
   // Reprograma una reserva existente
-reschedule = async (req: Request, res: Response) => {
-  try {
+  reschedule = async (req: Request, res: Response) => {
+    try {
+      const bookingId = Number(req.params.id);
 
-    const bookingId = Number(req.params.id);
+      if (isNaN(bookingId)) {
+        return res.status(400).json({
+          error: "ID de reserva no válido",
+        });
+      }
 
-    if (isNaN(bookingId)) {
-      return res.status(400).json({
-        error: "ID de reserva no válido",
+      const data = rescheduleSchema.parse(req.body);
+
+      const result = await rescheduleBookingUseCase.execute({
+        bookingId: bookingId,
+        newDate:
+          data.newDate instanceof Date
+            ? data.newDate.toISOString().split("T")[0]
+            : data.newDate,
+      });
+
+      return res.json(result);
+    } catch (error: unknown) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({
+          error: error.issues,
+        });
+      }
+
+      return res.status(500).json({
+        error:
+          error instanceof Error ? error.message : "Error interno del servidor",
       });
     }
-
-    const data = rescheduleSchema.parse(req.body);
-
-    const result = await rescheduleBookingUseCase.execute({
-      bookingId: bookingId,
-      newDate: data.newDate instanceof Date
-        ? data.newDate.toISOString().split("T")[0]
-        : data.newDate
-  });
-
-    return res.json(result);
-
-  } catch (error: unknown) {
-
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({
-        error: error.issues,
-      });
-    }
-
-    return res.status(500).json({
-      error: error instanceof Error ? error.message : "Error interno del servidor",
-    });
-
-  }
-};
+  };
 
   // Cancela una reserva
   cancel = async (req: Request, res: Response) => {
     try {
-
       const bookingId = Number(req.params.id);
 
       if (isNaN(bookingId)) {
@@ -163,20 +148,17 @@ reschedule = async (req: Request, res: Response) => {
       return res.json({
         message: "Reserva cancelada exitosamente",
       });
-
     } catch (error: unknown) {
-
       return res.status(500).json({
-        error: error instanceof Error ? error.message : "Error interno del servidor",
+        error:
+          error instanceof Error ? error.message : "Error interno del servidor",
       });
-
     }
   };
 
   // Confirma una reserva
   confirm = async (req: Request, res: Response) => {
     try {
-
       const bookingId = Number(req.params.id);
 
       if (isNaN(bookingId)) {
@@ -188,14 +170,11 @@ reschedule = async (req: Request, res: Response) => {
       const result = await confirmBookingUseCase.execute(bookingId);
 
       return res.json(result);
-
     } catch (error: unknown) {
-
       return res.status(500).json({
-        error: error instanceof Error ? error.message : "Error interno del servidor",
+        error:
+          error instanceof Error ? error.message : "Error interno del servidor",
       });
-
     }
   };
-
 }
